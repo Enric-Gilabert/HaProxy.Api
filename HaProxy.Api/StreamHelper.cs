@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,6 +13,20 @@ namespace Clint.Network.HaProxy.Api
         private readonly IPEndPoint _endpoint;
         private NetworkStream _stream;
 
+        public  int Port
+        {
+            get => _endpoint.Port;
+            set => _endpoint.Port = value;
+        }
+
+        public IPAddress Address
+        {
+            get => _endpoint.Address;
+            set=> _endpoint.Address = value;
+        }
+
+        public string HostName => $"{Address}";
+
         public StreamHelper(IPEndPoint endpoint)
         {
             _endpoint = endpoint;
@@ -19,8 +34,13 @@ namespace Clint.Network.HaProxy.Api
 
         internal void Connect()
         {
-            //_stream = new TcpClient(_endpoint).GetStream();
-            _stream = new TcpClient("167.71.74.160", 7777).GetStream();
+
+            // La direccion solicitada no es valida en este contexto.
+            // _stream = new TcpClient(_endpoint).GetStream();
+            
+            // Este si que funciona.
+            _stream = new TcpClient(this.HostName, this.Port).GetStream();
+            
         }
 
         public void Send(string data)
